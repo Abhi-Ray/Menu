@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Script from 'next/script';
+import Script from "next/script";
 
 export default function CheckoutPage() {
   const pathname = usePathname();
@@ -80,7 +80,7 @@ export default function CheckoutPage() {
 
       openRazorpay(data.id);
     } catch (error) {
-      console.error('Error creating payment:', error);
+      console.error("Error creating payment:", error);
       setError("Payment processing error. Please try again.");
     }
   };
@@ -90,7 +90,7 @@ export default function CheckoutPage() {
       key: "rzp_live_goVduJKgKARu0e",
       amount: totalWithTax * 100,
       currency: "INR",
-      name: "Your Store Name",
+      name: "MomoLand",
       description: "Payment for order",
       order_id: orderId,
       handler: function (response) {
@@ -208,7 +208,8 @@ export default function CheckoutPage() {
               <strong>Bill Date:</strong> {new Date().toLocaleString()}
             </p>
             <p>
-              <strong>{isCar ? "Vehicle No." : "Table No."}:</strong> {isCar ? vehicleNumber : tableNumber || "Not provided"}
+              <strong>{isCar ? "Vehicle No." : "Table No."}:</strong>{" "}
+              {isCar ? vehicleNumber : tableNumber || "Not provided"}
             </p>
             <p>
               <strong>Contact No.:</strong> +91-{contactNumber || "Not provided"}
@@ -231,7 +232,8 @@ export default function CheckoutPage() {
               <strong>Total excluding Discount & Tax:</strong> ₹{totalPrice.toFixed(2)}
             </p>
             <p>
-              <strong>Taxes (SGST (9%) + CGST (9%)):</strong> ₹{(totalPrice * taxRate).toFixed(2)}
+              <strong>Taxes (SGST (9%) + CGST (9%)):</strong> ₹
+              {(totalPrice * taxRate).toFixed(2)}
             </p>
             <p>
               <strong>Total Amount:</strong> ₹{totalWithTax.toFixed(2)}
