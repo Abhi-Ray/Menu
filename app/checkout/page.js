@@ -3,6 +3,9 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Script from "next/script";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import Footer from '../footer'
 
 export default function CheckoutPage() {
   const pathname = usePathname();
@@ -15,7 +18,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [totalPrice, setTotalPrice] = useState(0);
   const taxRate = 0.18; // 18% tax rate
-
+const router = useRouter()
   useEffect(() => {
     const items = [];
     const params = Array.from(searchParams.entries());
@@ -47,9 +50,8 @@ export default function CheckoutPage() {
 
   const totalWithTax = totalPrice * (1 + taxRate);
 
-  const sms = (response) => {
+  const sms = () => {
     console.log("Payment Successful. Sending SMS...");
-    console.log(response);
   };
 
   const handlePayment = async () => {
@@ -87,16 +89,15 @@ export default function CheckoutPage() {
 
   const openRazorpay = (orderId) => {
     const options = {
-      key: "rzp_live_goVduJKgKARu0e",
+      key: "rzp_test_jdutmfAZasYbrp",
       amount: totalWithTax * 100,
       currency: "INR",
       name: "MomoLand",
       description: "Payment for order",
       order_id: orderId,
       handler: function (response) {
-        alert("Payment successful!");
-        console.log("Payment Response:", response);
-        sms(response);
+        
+        router.push("/")
       },
       prefill: {
         contact: contactNumber,
@@ -135,32 +136,49 @@ export default function CheckoutPage() {
         src="https://checkout.razorpay.com/v1/checkout.js"
       />
       <div>
-        <header className="flex justify-between p-4 bg-gray-800 text-white">
-          <div className="logo">Logo</div>
-          <div className="cart">
+      <header className="flex justify-between p-4 " style={{backgroundColor:"#f0eae5"}}>
+      <div className="logo"><Image src="/img/logo.png" alt="logo" width={50} height={50}/></div>
+          <div className="cart flex">
             <button className="flex items-center">
-              <span className="mr-2">Cart</span>
-              <span className="bg-red-500 px-2 py-1 rounded-full">
+            <span className="mr-2"><i class="fa-solid fa-cart-shopping" style={{color:"#5a0005", fontSize:"1.05em"}}></i></span>
+              <span  style={{color:"white", backgroundColor:"#5a0005",width:"20px" , height:"20px",borderRadius:"50%",fontSize:".8em"}}>
                 {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
               </span>
             </button>
             {/* Toggle for Car */}
             <div className="flex items-center ml-4">
-              <label className="mr-2">Car:</label>
-              <input
-                type="checkbox"
-                checked={isCar}
-                onChange={() => setIsCar(!isCar)}
-              />
-            </div>
+  <label className="mr-2">Car</label>
+  <label className="relative inline-flex items-center cursor-pointer">
+    <input
+      type="checkbox"
+      id="car-toggle"
+      className="sr-only"
+      checked={isCar}
+      onChange={() => setIsCar(!isCar)}
+    />
+   <div
+  className="block w-10 h-6 rounded-full"
+  style={{
+    backgroundColor: isCar ? "#5a0005" : "gray",
+  }}
+></div>
+
+    <div
+      className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${
+        isCar ? "transform translate-x-4" : ""
+      }`}
+    ></div>
+  </label>
+</div>
+
           </div>
         </header>
-
+       
         <main className="p-4">
-          <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center " style={{color:"#5a0005"}}>Checkout</h2>
 
-          <form onSubmit={handleSubmit} className="mb-8">
-            <h3 className="text-xl font-semibold mb-2">Fill in Your Details</h3>
+          <form onSubmit={handleSubmit} className="mb-8 p-4 bg-gray-100">
+            {/* <h3 className="text-xl font-semibold mb-2 text-center">Fill in Your Details</h3> */}
             <div className="mb-4">
               <label className="block mb-2">Contact Number</label>
               <input
@@ -183,6 +201,7 @@ export default function CheckoutPage() {
                   className="border p-2 w-full"
                   placeholder="Enter your vehicle number"
                   required
+
                 />
               </div>
             ) : (
@@ -195,6 +214,7 @@ export default function CheckoutPage() {
                   className="border p-2 w-full"
                   placeholder="Enter your table number"
                   required
+
                 />
               </div>
             )}
@@ -202,20 +222,25 @@ export default function CheckoutPage() {
             {error && <p className="text-red-500 mb-4">{error}</p>}
           </form>
 
-          <h3 className="text-xl font-semibold mb-2">Bill Details</h3>
+          {/* <h3 className="text-xl font-semibold mb-2 text-center">Bill Details</h3> */}
           <div className="border p-4 mb-4">
-            <p>
-              <strong>Bill Date:</strong> {new Date().toLocaleString()}
-            </p>
-            <p>
-              <strong>{isCar ? "Vehicle No." : "Table No."}:</strong>{" "}
-              {isCar ? vehicleNumber : tableNumber || "Not provided"}
-            </p>
-            <p>
-              <strong>Contact No.:</strong> +91-{contactNumber || "Not provided"}
-            </p>
+          <p className="w-full flex justify-between">
+  <strong>Bill Date:</strong>
+  <span>{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+</p>
 
-            <h4 className="font-semibold mt-4">Description</h4>
+<p className="w-full flex justify-between">
+  <strong>{isCar ? "Vehicle No." : "Table No."}:</strong>
+  <span>{isCar ? vehicleNumber : tableNumber || "Not provided"}</span>
+</p>
+<p className="w-full flex justify-between">
+  <strong>Contact No.:</strong>
+  <span>+91-{contactNumber || "Not provided"}</span>
+</p>
+<hr className="mt-4 border-dotted border-1 border-gray-500" />
+
+
+            <h4 className="font-semibold mt-4">Items</h4>
             <ul>
               {cartItems.map((item, index) => (
                 <li key={index} className="flex justify-between">
@@ -226,28 +251,36 @@ export default function CheckoutPage() {
                 </li>
               ))}
             </ul>
+            <hr className="mt-4 border-dotted border-1 border-gray-500" />
 
-            <h4 className="font-semibold mt-4">Summary</h4>
-            <p>
-              <strong>Total excluding Discount & Tax:</strong> ₹{totalPrice.toFixed(2)}
-            </p>
-            <p>
-              <strong>Taxes (SGST (9%) + CGST (9%)):</strong> ₹
-              {(totalPrice * taxRate).toFixed(2)}
-            </p>
-            <p>
-              <strong>Total Amount:</strong> ₹{totalWithTax.toFixed(2)}
-            </p>
+            <h4 className="font-semibold mt-4"></h4>
+            <p className="w-full flex justify-between">
+  <strong>Amount:</strong> 
+  <span>₹{totalPrice.toFixed(2)}</span>
+</p>
+<p className="w-full flex justify-between">
+  <strong>Taxes (GST 18%):</strong> 
+  <span>₹{(totalPrice * taxRate).toFixed(2)}</span>
+</p>
+<hr className="mt-4 border-dotted border-1 border-gray-500" />
+
+<p className="w-full flex justify-between mt-4">
+  <strong>Total Amount:</strong> 
+  <span>₹{totalWithTax.toFixed(2)}</span>
+</p>
+
           </div>
 
           <button
             onClick={handleSubmit}
-            className="bg-green-500 text-white px-4 py-2 rounded"
+            className="bg-green-500 text-white px-4 py-2 rounded w-full mx-auto"
           >
             Proceed to Pay
           </button>
         </main>
       </div>
+    <Footer/>
+
     </>
   );
 }

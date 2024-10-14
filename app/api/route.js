@@ -1,8 +1,8 @@
 import Razorpay from "razorpay";
 
 const razorpay = new Razorpay({
-    key_id: "rzp_live_goVduJKgKARu0e", // Replace with your actual Razorpay key ID
-    key_secret: "WE48UVKxlJmdHLmtNYZhEtJg", // Replace with your actual Razorpay key secret
+    key_id: "rzp_test_jdutmfAZasYbrp", // Replace with your actual Razorpay key ID
+    key_secret: "YPG6aw0igH0aM8cDEREy6Eie", // Replace with your actual Razorpay key secret
   });
   
 

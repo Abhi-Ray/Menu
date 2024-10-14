@@ -1,7 +1,9 @@
 "use client";
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { categories } from "@/public/data";
+import Footer from './footer'
 export default function MenuPage() {
   // State for cart and categories
   const [cartCount, setCartCount] = useState(0);
@@ -44,28 +46,31 @@ export default function MenuPage() {
  
 
   return (
+    <>
     <div>
       {/* Header */}
-      <header className="flex justify-between p-4 bg-gray-800 text-white">
-        <div className="logo">Logo</div>
+      <header className="flex justify-between p-4 " style={{backgroundColor:"#f0eae5"}}>
+        <div className="logo"><Image src="/img/logo.png" alt="logo" width={50} height={50}/></div>
         <div className="flex items-center">
          
           <div className="cart">
             <button className="flex items-center">
-              <span className="mr-2">Cart</span>
-              <span className="bg-red-500 px-2 py-1 rounded-full">{cartCount}</span>
+              <span className="mr-2"><i class="fa-solid fa-cart-shopping" style={{color:"#5a0005", fontSize:"1.05em"}}></i></span>
+              <span  style={{color:"white", backgroundColor:"#5a0005",width:"20px" , height:"20px",borderRadius:"50%",fontSize:".8em"}}>{cartCount}</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* Body */}
-      <main className="p-4">
+      <main className="p-4 mt-6">
         {categories.map((category) => (
           <div key={category.title} className="mb-6">
             <div
-              className="flex justify-between cursor-pointer border-b pb-2 mb-2"
+              className="flex justify-between items-center cursor-pointer  py-2 px-4 mb-2"
               onClick={() => toggleCategory(category.title)}
+              style={{ backgroundColor: category.color , borderRadius:"40px"}}
+
             >
               <div className="text-xl">{category.title}</div>
               <img src={category.image} alt={category.title} className="w-16 h-16 object-cover" />
@@ -73,20 +78,20 @@ export default function MenuPage() {
 
             {/* Dishes under each category */}
             {categoryOpen[category.title] && (
-              <div className="ml-4">
+              <div className="ml-4" style={{color:category.color}}>
                 {category.dishes.map((dish) => (
                   <div key={dish.name} className="flex justify-between items-center mb-4">
                     {/* Add/remove button */}
                     <div className="flex items-center">
                       <button
-                        className="px-2 bg-gray-300"
+                        className="px-2 bg-gray-100"
                         onClick={() => removeFromCart(dish.name)}
                       >
                         -
                       </button>
                       <span className="px-4">{cartItems[dish.name] || 0}</span>
                       <button
-                        className="px-2 bg-gray-300"
+                        className="px-2 bg-gray-100"
                         onClick={() => addToCart(dish.name)}
                       >
                         +
@@ -110,11 +115,13 @@ export default function MenuPage() {
       </main>
 
       {/* Checkout button */}
-      <footer className="p-4">
+      <footer className="p-4 w-full mx-auto">
         <Link href={`/checkout?${serializeCartItems()}`} className="block bg-green-500 text-white text-center py-2 rounded">
           Checkout
         </Link>
       </footer>
     </div>
+    <Footer/>
+    </>
   );
 }
